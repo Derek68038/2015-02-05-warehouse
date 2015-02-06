@@ -1,18 +1,9 @@
 class Location
-  attr_reader :location_id
+  attr_reader :id
   attr_accessor :city
   
   def initialize(options)
     @city = options["city"]
-  end
-  
-  # Public: #products
-  # Get the products which are in this location.
-  #
-  # Returns: Array - Rows from 'products' table for this location.
-  def products
-    #                 SELECT * FROM products WHERE product_id = 2;
-    DB.execute("SELECT * FROM products WHERE product_id = #{@location_id}")
   end
 
   # Public: .all
