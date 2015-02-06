@@ -68,15 +68,13 @@ class Product
   # Returns:
   # Array of student objects with the given name.
   def self.fetch_products_from_location(location_id)
-    results = DB.execute("SELECT * FROM products WHERE location_id = 
-                              '#{@location_id}'")
+    results = DB.execute("SELECT * FROM products WHERE location_id = #{location_id}")
     
     results_as_objects = []
     
     results.each do |r|
       results_as_objects << self.new(r) #any results returned as new objects   
-    end
-    
+    end  
     results_as_objects
   end
   
@@ -89,8 +87,7 @@ class Product
   # Returns:
   # Array of student objects with the given name.
   def self.fetch_products_from_category(category_id)
-    results = DB.execute("SELECT * FROM products WHERE category_id = 
-                              '#{@category_id}'")
+    results = DB.execute("SELECT * FROM products WHERE category_id = #{category_id}")
     
     results_as_objects = []
     
@@ -101,7 +98,24 @@ class Product
     results_as_objects
   end
   
-  def delete_product
+  # Public: .find
+  # Fetch a given record from the students table.
+  #
+  # Parameters:
+  # record_id - Integer: The student's ID in the table.
+  #
+  # Returns:
+  # Array containing hopefully one row as a hash.
+  def self.find(record_id)
+    results = DB.execute("SELECT * FROM products WHERE id = #{record_id}")
+    record_details = results[0] # hash of the record's details.
+    self.new(record_details)
+    # self - within any method, ask yourself on what you're running it on  
+  end
+
+  def self.delete(record_id)
+    DB.execute("DELETE FROM products WHERE id = #{record_id}")  
+  end
     
 end
-end
+
