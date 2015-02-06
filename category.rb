@@ -1,18 +1,9 @@
 class Category
-  attr_reader :category_id
+  attr_reader :id
   attr_accessor :name
   
   def initialize(options)
     @name = options["name"]
-  end
-  
-  # Public: #products
-  # Get the products which are in this category.
-  #
-  # Returns: Array - Rows from 'products' table for this category.
-  def products
-    #                 SELECT * FROM products WHERE category_id = 2;
-    DB.execute("SELECT * FROM products WHERE product_id = #{@category_id}")
   end
   
   # Public: .all
