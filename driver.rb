@@ -4,7 +4,7 @@ require 'pry'
 require "sqlite3"
 
 # Load/create our database for this program.
-DB = SQLite3::Database.new("warehouse_mgr.db")
+DATABASE = SQLite3::Database.new("warehouse_mgr.db")
 
 require_relative "location.rb"
 require_relative "category.rb"
