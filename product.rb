@@ -1,7 +1,43 @@
+# Class: Product
+#
+# Creates new product objects/records for products table in warehouse_mgr 
+# database.
+# 
+# Attributes:
+# @id              - Integer: Unique identifier for product (primary key).
+# @serial_number   - Integer: Serial number for product. 
+# @description     - String: Description/title of product.
+# @quantity        - Integer: Number of items of product.
+# @cost            - Integer: Cost of product (based on quantity).
+# @location_id     - Integer: Location site for product (foreign key).
+# @category_id     - Integer: Category type for product (foreign key).
+#
+# Public Methods:
+# ???
+#
+# Private Methods:
+# insert
+
 class Product
+  
   attr_reader :id
   attr_accessor :serial_number, :quantity, :description, :cost, :location_id,
-  :category_id
+                :category_id
+  
+  # Private (triggered by .new): .initialize
+  # Gathers arguments (field values) in an options Hash; automatically inserts 
+  # them into the products table via private method .insert.
+  #
+  # Parameters:
+  # options - {serial_number: Integer, name: String, description: String,     
+  # quantity: Integer, cost: Integer, location_id: Integer, category_id: 
+  # Integer}.
+  #
+  # Returns: 
+  # ???
+  # 
+  # State Changes:
+  # ???
   
   def initialize(options)
     @serial_number    = options["serial_number"]
@@ -11,17 +47,24 @@ class Product
     @location_id      = options["location_id"]
     @category_id      = options["category_id"]
   end
-
-  # Take all the attributes for this object and make sure
-  # those are the values in the object's corresponding row
-  # in the "products" table.
-  def save #updates the locations table to changes we made to the object in ruby
+  
+  # Public: #save
+  # Updates the products table to changes made to an existing object in ruby.
+  # 
+  # Parameters:
+  # None
+  #
+  # Returns:
+  # Empty Array. Updates sql database with changes.
+  #
+  # State Changes:
+  # Pushes all attributes to array while deleting @ symbol.
+  
+  def save #
     attributes = []
     
-    # Example  [:@name, :@age, :@hometown]
     instance_variables.each do |i|
-      # Example  :@name
-      attributes << i.to_s.delete("@") # "name"
+      attributes << i.to_s.delete("@")
     end
 
     query_components_array = []
@@ -37,57 +80,67 @@ class Product
     end
 
     query_string = query_components_array.join(", ")
-    # name = 'Sumeet', age = 75, hometown = 'San Diego'
+    # example: name = 'Sumeet', age = 75, hometown = 'San Diego'
     
-    DB.execute("UPDATE products SET #{query_string} WHERE id = #{id}")
+    DATABASE.execute("UPDATE products SET #{query_string} WHERE id = #{id}")
   end
     
   # Public: .all
-  # Get all the products.
-  #
-  # Returns: Array - Rows from 'products' with all information.
-  def self.all
-    DB.execute("SELECT * FROM products")
-  end
-  
-  def insert
-    #           INSERT INTO products (description) VALUES ('Fargo');
-    DB.execute("INSERT INTO products (serial_number, description, quantity,
-               cost, location_id, category_id) VALUES (
-               #{@serial_number}, '#{@description}', #{@quantity}, #{@cost},
-               #{@location_id}, #{@category_id})")
-    @id = DB.last_insert_row_id
-  end
-  
-  # Public .where_name_is
-  # Gets a list of students with a given name.
+  # Get all the records in the products table.
   #
   # Parameters:
-  # x - String: The name to search for.
+  # None
+  #
+  # Returns: 
+  # Array: Records from the products table displaying all fields.
+  #
+  # State Changes:
+  # None
+  
+  def self.all
+    DATABASE.execute("SELECT * FROM products")
+  end
+  
+  # Public .fetch_products_from_location
+  # Gets a list of products with a given location id.
+  #
+  # Parameters:
+  # location_id - Integer: The location id to search for.
   #
   # Returns:
-  # Array of student objects with the given name.
+  # Array of product objects with the given location id.
+  #
+  # State Changes:
+  # None
+  
   def self.fetch_products_from_location(location_id)
-    results = DB.execute("SELECT * FROM products WHERE location_id = #{location_id}")
+    results = DATABASE.execute("SELECT * FROM products WHERE location_id = 
+                                #{location_id}")
     
     results_as_objects = []
     
     results.each do |r|
       results_as_objects << self.new(r) #any results returned as new objects   
-    end  
+    end
+      
     results_as_objects
   end
   
-  # Public .where_name_is
-  # Gets a list of students with a given name.
+  # Public .fetch_products_from_category
+  # Gets a list of products with a given category id.
   #
   # Parameters:
-  # x - String: The name to search for.
+  # category_id - Integer: The category id to search for.
   #
   # Returns:
-  # Array of student objects with the given name.
+  # Array of product objects with the given category id.
+  #
+  # State Changes:
+  # None
+  
   def self.fetch_products_from_category(category_id)
-    results = DB.execute("SELECT * FROM products WHERE category_id = #{category_id}")
+    results = DATABASE.execute("SELECT * FROM products WHERE category_id = 
+                                #{category_id}")
     
     results_as_objects = []
     
@@ -99,22 +152,62 @@ class Product
   end
   
   # Public: .find
-  # Fetch a given record from the students table.
+  # Fetch a given record from the products table.
   #
   # Parameters:
-  # record_id - Integer: The student's ID in the table.
+  # record_id - Integer: The product's ID in the table.
   #
   # Returns:
-  # Array containing hopefully one row as a hash.
+  # Array containing one row as a hash.
+  #
+  # State Changes:
+  # None
+  
   def self.find(record_id)
-    results = DB.execute("SELECT * FROM products WHERE id = #{record_id}")
+    results = DATABASE.execute("SELECT * FROM products WHERE id = #{record_id}")
     record_details = results[0] # hash of the record's details.
-    self.new(record_details)
-    # self - within any method, ask yourself on what you're running it on  
+    self.new(record_details) 
   end
-
+ 
+  #private (got an error when trying to use .insert)
+  
+  # Private: #insert
+  # Syntax to enter the Ruby object's arguments as a records' field values via 
+  # sqlite3.
+  #
+  # Parameters:
+  # None
+  #
+  # Returns: 
+  # Integer - @id, "id" field value, generated by table upon creation and 
+  # pulled from the record.
+  # 
+  # State ChangeS:
+  # ???
+  
+  def insert
+    DATABASE.execute("INSERT INTO products (serial_number, description, 
+                      quantity, cost, location_id, category_id) VALUES 
+                      (#{@serial_number}, '#{@description}', #{@quantity}, 
+                      #{@cost}, #{@location_id}, #{@category_id})")
+    @id = DATABASE.last_insert_row_id
+  end
+  
+  # Private: .delete
+  # Syntax to delete a record in the products table who's id matches the 
+  # inputted record id.
+  #
+  # Parameters:
+  # record_id - Integer: The id which you want to delete.
+  #
+  # Returns:
+  # Empty array.
+  #
+  # State Changes:
+  # None
+  
   def self.delete(record_id)
-    DB.execute("DELETE FROM products WHERE id = #{record_id}")  
+    DATABASE.execute("DELETE FROM products WHERE id = #{record_id}")  
   end
     
 end
