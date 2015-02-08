@@ -88,13 +88,30 @@ class WarehouseTest < Minitest::Test
     
     results1 = Product.find("products", 1)
     results2 = Location.find("locations", 1)
-    results3= Category.find("categories", 1) 
+    results3 = Category.find("categories", 1) 
     
     assert_equal(10, results1.cost)
     assert_equal("Omaha", results2.city)
     assert_equal("Book", results3.name)                        
   end
-
+  
+  def test_delete_method
+    product1 = Product.new({"serial_number" => 1, "description" => "Hello", 
+                            "quantity" => 5, "cost" => 10, "location_id" => 1,
+                            "category_id" => 3})
+                            
+    product2 = Product.new({"serial_number" => 2, "description" => "Goodbye", 
+                            "quantity" => 8, "cost" => 12, "location_id" => 1,
+                            "category_id" => 2})
+                            
+    product1.insert("products")
+    product2.insert("products")
+    
+    Product.delete("products", 1)
+    
+    assert_equal(1, Product.all("products").length)
+  end
+  
 end
 
 #binding.pry
