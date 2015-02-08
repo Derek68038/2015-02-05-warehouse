@@ -112,6 +112,19 @@ class WarehouseTest < Minitest::Test
     assert_equal(1, Product.all("products").length)
   end
   
+  def test_save_method
+    product = Product.new({"serial_number" => 1, "description" => "Hello", 
+                            "quantity" => 5, "cost" => 10, "location_id" => 1,
+                            "category_id" => 3})
+                            
+    product.insert("products")
+    
+    product.quantity = 10
+    
+    product.save("products")
+    
+    assert_equal(10, product.quantity)
+  end
 end
 
 #binding.pry
