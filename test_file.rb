@@ -125,6 +125,37 @@ class WarehouseTest < Minitest::Test
     
     assert_equal(10, product.quantity)
   end
+  
+  def test_insert_method
+    product = Product.new({"serial_number" => 1, "description" => "Hello", 
+                            "quantity" => 5, "cost" => 10, "location_id" => 1,
+                            "category_id" => 3})
+                            
+    product.insert("products")
+    
+   assert_equal(1, Product.all("products").length) 
+ end
+ 
+ def test_fetch_by_method
+   product1 = Product.new({"serial_number" => 1, "description" => "Hello", 
+                           "quantity" => 5, "cost" => 10, "location_id" => 1,
+                           "category_id" => 3})
+                           
+   product2 = Product.new({"serial_number" => 2, "description" => "Goodbye", 
+                           "quantity" => 8, "cost" => 12, "location_id" => 1,
+                           "category_id" => 2})
+   
+   product3 = Product.new({"serial_number" => 3, "description" => "Hi again", 
+                           "quantity" => 10, "cost" => 15, "location_id" => 2,
+                           "category_id" => 2})
+  
+   product1.insert("products")
+   product2.insert("products")
+   product3.insert("products")
+   
+   assert_equal(2, Product.fetch_by("location_id" => 1).length)
+ end
+ 
 end
 
 #binding.pry
