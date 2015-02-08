@@ -64,7 +64,7 @@ class Product
   # State Changes:
   # None
   
-  def fetch_by(options) #ex: Product.fetch_by("location_id" => 2)
+  def self.fetch_by(options) #ex: Product.fetch_by("location_id" => 2)
     # options.length == 1
     v = []
     k = []
@@ -83,9 +83,17 @@ class Product
     results.each do |r|
       results_as_objects << self.new(r)
     end
+    
+    x = 0
 
-    results_as_objects
+    until x == results_as_objects.length
+      puts "Description: '#{results_as_objects[x].description}'".ljust(50) +
+            "\tQuantity: #{results_as_objects[x].quantity}".rjust(15)
+      x+=1
+    end
 
+    results_as_objects # need to return this for testing purposes mainly
+                       # doesn't seem to affect any of the output in driver
   end
   
 end
