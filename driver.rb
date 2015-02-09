@@ -31,16 +31,24 @@ if selection == 1 # Pull up all records for a location
   Product.fetch_by("location_id" => id)
   
 elsif selection == 2 # Pull up a product record
-  puts "Please enter the id or name of the product:"
+  puts "\nPlease enter the id or name of the product:"
+  search_query = gets.chomp.to_i
+  puts
+  a = Product.find("products", search_query)
+  
+  puts "Serial Number: #{a.serial_number}\nDescription: '#{a.description}'"
+  puts "Quantity: #{a.quantity}\nCost: #{a.cost}\nLocation: #{a.location_id}"
+  puts "Category: #{a.category_id}"
+  
+elsif selection == 3 # Edit product information
+  puts "Please enter the id of the product record you would like to edit:"
   search_query = gets.chomp
   
-  if Integer(search_query)
-    puts Product.find("products", search_query).description
-  else
-    puts Product.fetch_by("description" => search_query).description
-  end
+  a = Product.find("products", search_query)
   
-elsif selection == 3 # Edit product information 
+  puts "Which of the following would you like to edit?"
+  puts "#{a.list_attributes}"
+  fields_to_edit = gets.chomp  
   
 elsif selection == 4 # Transfer product
   
