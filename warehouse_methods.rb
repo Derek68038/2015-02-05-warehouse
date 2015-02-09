@@ -35,10 +35,10 @@ module WarehouseMethods
     # State Changes:
     # None
     
-    def find(table_name, record_id)
+    def find(table_name, record_id) 
       results = DATABASE.execute("SELECT * FROM #{table_name} WHERE id = #{record_id}")
       record_details = results[0] # hash of the record's details.
-      self.new(record_details)
+      self.new(record_details) 
     end
       
     # Public: .delete
